@@ -23,6 +23,10 @@ class TableViewController: UITableViewController {
     let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
     let TIMESTAMP: String = "1"
     
+    
+    //MARK: - Outlet
+    @IBOutlet weak var downloadButton: UIBarButtonItem!
+    
     // MARK: - View Start
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +45,12 @@ class TableViewController: UITableViewController {
         searchController.searchBar.placeholder = "Search marvel heroes"
         navigationItem.searchController = searchController
         definesPresentationContext = true
+        
+        if downloading {
+            downloadButton.isEnabled = !downloading
+        } else {
+            downloadButton.isEnabled = downloading
+        }
  
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -49,6 +59,20 @@ class TableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
+    // MARK: - Action
+    
+    
+    @IBAction func forceDownload(_ sender: Any) {
+        for _ in 1...10 {
+            if downloading == false  {
+                let offsetNumber = heroes.heroes.count / 100
+                let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
+                let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=\(100 * offsetNumber)&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
+                getHeroesList(url: url)
+            }
+        }
+        
+    }
     
     // MARK: - Function
     
@@ -75,6 +99,7 @@ class TableViewController: UITableViewController {
         let session = URLSession(configuration: configuration)
         print("Donwloading with request : \(url.absoluteString)")
         downloading = true
+        downloadButton.isEnabled = false
         let task = session.dataTask(with: url) {
             (data, response, error) in
             guard let httpResponse = response as? HTTPURLResponse,
@@ -111,6 +136,7 @@ class TableViewController: UITableViewController {
                 queue.addOperation {
                     self.tableView.reloadData()
                     self.downloading = false
+                    self.downloadButton.isEnabled = true
                 }
             }
         }
