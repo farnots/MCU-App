@@ -20,6 +20,7 @@ class TableViewController: UITableViewController {
     
     // State
     var downloading: Bool = false
+    var downloadAccumulation: Int = 0
     
     // UI
     let searchController = UISearchController(searchResultsController: nil)
@@ -127,7 +128,9 @@ class TableViewController: UITableViewController {
                             guard let currentHero = try Hero(json: hero) else {
                                 throw SerializationError.missing("Hero")
                             }
-                            self.tempHeroes[offset].addHero(hero: currentHero)
+                            if offset < self.tempHeroes.count{
+                                 self.tempHeroes[offset].addHero(hero: currentHero)
+                            }
                         } catch let error {
                             print(error)
                         }
@@ -136,9 +139,9 @@ class TableViewController: UITableViewController {
                 }
                 let queue = OperationQueue.main
                 queue.addOperation {
-                    
-                    self.tempHeroes[offset].status = Status.add
-                   
+                    if offset < self.tempHeroes.count{
+                        self.tempHeroes[offset].status = Status.add
+                    }
                     // Adding only possible value in order
                     var i = 0
                     while i < self.tempHeroes.count && self.tempHeroes[i].status != Status.empty {
@@ -205,6 +208,7 @@ class TableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "heroCell", for: indexPath)
+        cell.tag = indexPath.row
         let position = indexPath.row
         let hero: Hero
         if isFiltering() || isShowLoved() {
@@ -213,20 +217,9 @@ class TableViewController: UITableViewController {
             hero = heroes.heroes[position]
         }
         
-        
-        if hero.image == nil {
-            if hero.fullPathImage == "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" {
-                hero.image = UIImage.init(named: "no_image")
-            } else {
-                    let queue = OperationQueue()
-                    queue.addOperation {
-                    let imageURL = URL(string: hero.fullPathImage! )!
-                    let imageData = try! Data(contentsOf: imageURL)
-                    hero.image = UIImage(data: imageData)!
-                }
-            }
+        if hero.fullPathImage == "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" {
+            hero.image = UIImage.init(named: "no_image")
         }
-        
         
         
         if let heart = cell.viewWithTag(75) as? UIButton {
@@ -242,9 +235,47 @@ class TableViewController: UITableViewController {
         if let label = cell.viewWithTag(20) as? UILabel {
             label.text = hero.name
         }
-        if let image = cell.viewWithTag(10) as? UIImageView{
-            image.image = hero.image
+        
+        
+            if let image = cell.viewWithTag(10) as? UIImageView{
+                print("\(hero.name) : Set from standard ")
+                if hero.image == nil {
+                    image.image = nil
+                } else {
+                    image.image = hero.image
+                }
+                
+            }
+        
+        
+        
+        let queue = OperationQueue()
+        let mainQueue = OperationQueue.main
+        if hero.image == nil {
+            queue.addOperation {
+                let imageURL = URL(string: hero.fullPathImage! )!
+                let imageData = try! Data(contentsOf: imageURL)
+                print("\(hero.name) : Start download")
+                hero.image = UIImage(data: imageData)!
+                
+                mainQueue.addOperation {
+                    if let image = cell.viewWithTag(10) as? UIImageView {
+                        if (cell.tag == indexPath.row) {
+                            print("\(hero.name) : Set from queue ")
+                            image.image = hero.image
+                            self.downloadAccumulation = 0
+                        } else {
+                            self.downloadAccumulation += 1
+                            print("\(hero.name) : NO MORE IN VIEW \(self.downloadAccumulation)")
+                            
+                        }
+                    }
+                }
+                
+            }
         }
+    
+           
         
         
         if downloading == false && position >= heroes.heroes.count - 30 {
