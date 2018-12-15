@@ -15,6 +15,8 @@ class TableViewController: UITableViewController {
     // MARK: - Variables
     var heroes: MarvelHeroes = MarvelHeroes()
     
+    
+    // MARK: - View Start
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -78,6 +80,10 @@ class TableViewController: UITableViewController {
                 do {
                      try? self.heroes.storeAllHeroes(json: jsonResults)
                 }
+                let queue = OperationQueue.main
+                queue.addOperation {
+                    self.tableView.reloadData()
+                }
             }
         }
         
@@ -89,24 +95,30 @@ class TableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return heroes.heroes.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "heroCell", for: indexPath)
+        let position = indexPath.row
+        let hero = heroes.heroes[position]
+        
+        
+        if let label = cell.viewWithTag(20) as? UILabel {
+            label.text = hero.name
+        }
+        if let image = cell.viewWithTag(10) as? UIImageView{
+            image.image = hero.image
+        }
+        
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.
@@ -154,3 +166,4 @@ class TableViewController: UITableViewController {
     */
 
 }
+

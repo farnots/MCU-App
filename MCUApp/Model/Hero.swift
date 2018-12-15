@@ -45,7 +45,8 @@ class Hero {
         self.id = id
         self.name = name
         self.description = description
-        let imageURL = URL(string: imagePath + "." + imageExt)!
+        let imageFullPath = imagePath + "." + imageExt
+        let imageURL = URL(string: imageFullPath )!
         let imageData = try! Data(contentsOf: imageURL)
         self.image = UIImage(data: imageData)!
         
