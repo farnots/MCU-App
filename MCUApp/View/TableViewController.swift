@@ -27,13 +27,16 @@ class TableViewController: UITableViewController {
     //MARK: - Outlet
     @IBOutlet weak var downloadButton: UIBarButtonItem!
     
+    
+    
     // MARK: - View Start
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Connexion informations
         let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
-        let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
+        let offsetNumber = heroes.heroes.count / 100
+        let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=\(offsetNumber)&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
         
         // Initialization
         getHeroesList(url: url)
@@ -145,7 +148,23 @@ class TableViewController: UITableViewController {
 
     }
 
+    
+    @objc func loveHero(_ sender: UIButton) {
+        
+        guard let cell = sender.superview?.superview as? UITableViewCell,  let indexPath = tableView.indexPath(for: cell) else {
+            return // or fatalError() or whatever
+        }
+       
+        print("Button pressed for \(indexPath.row)")
 
+        if heroes.heroes[indexPath.row].loved {
+            heroes.heroes[indexPath.row].loved = false
+        } else {
+            heroes.heroes[indexPath.row].loved = true
+        }
+        tableView.reloadData()
+    }
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -171,6 +190,16 @@ class TableViewController: UITableViewController {
             hero = heroes.heroes[position]
         }
         
+        if let heart = cell.viewWithTag(75) as? UIButton {
+            heart.addTarget(self, action: #selector(self.loveHero), for: .touchUpInside)
+            if hero.loved {
+                heart.titleLabel?.font =  UIFont.systemFont(ofSize: 23)
+                heart.setTitle("♥︎", for: .normal)
+            } else {
+                heart.titleLabel?.font =  UIFont.systemFont(ofSize: 19)
+                heart.setTitle("♡", for: .normal)
+            }
+        }
         if let label = cell.viewWithTag(20) as? UILabel {
             label.text = hero.name
         }

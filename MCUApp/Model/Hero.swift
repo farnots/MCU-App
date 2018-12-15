@@ -18,6 +18,7 @@ class Hero {
     let name: String
     let description: String
     let image: UIImage
+    var loved: Bool = false
     
     init(id: Int, name: String, description: String, image: UIImage) {
         self.id = id
