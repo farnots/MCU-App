@@ -142,11 +142,20 @@ class TableViewController: UITableViewController {
         }
        
         print("Button pressed for \(indexPath.row)")
+        
+        if isFiltering() {
+            if filteredHeroes.heroes[indexPath.row].loved {
+                filteredHeroes.heroes[indexPath.row].loved = false
+            } else {
+                filteredHeroes.heroes[indexPath.row].loved = true
+            }
 
-        if heroes.heroes[indexPath.row].loved {
-            heroes.heroes[indexPath.row].loved = false
         } else {
-            heroes.heroes[indexPath.row].loved = true
+            if heroes.heroes[indexPath.row].loved {
+                heroes.heroes[indexPath.row].loved = false
+            } else {
+                heroes.heroes[indexPath.row].loved = true
+            }
         }
         tableView.reloadData()
     }
