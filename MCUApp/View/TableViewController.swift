@@ -14,8 +14,12 @@ class TableViewController: UITableViewController {
 
     // MARK: - Variables & Constant
     var heroes: MarvelHeroes = MarvelHeroes()
-    var filteredHeroes: MarvelHeroes = MarvelHeroes()
+    var tempHeroes: [MarvelHeroes] = []
     
+    
+    var filteredHeroes: MarvelHeroes = MarvelHeroes()
+    var downloadNumber: Int = 0
+    var aimedNumber: Int = 5
     var downloading: Bool = false
     let searchController = UISearchController(searchResultsController: nil)
     
@@ -23,59 +27,32 @@ class TableViewController: UITableViewController {
     let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
     let TIMESTAMP: String = "1"
     
-    
-    //MARK: - Outlet
-    @IBOutlet weak var downloadButton: UIBarButtonItem!
-    
-    
-    
     // MARK: - View Start
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Connexion informations
-        let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
-        let offsetNumber = heroes.heroes.count / 100
-        let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=\(offsetNumber)&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
-        
-        // Initialization
-        getHeroesList(url: url)
-        
+        download(16)
         
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search marvel heroes"
+        searchController.searchBar.placeholder = "Search Marvel heroes"
         navigationItem.searchController = searchController
         definesPresentationContext = true
-        
-        if downloading {
-            downloadButton.isEnabled = !downloading
-        } else {
-            downloadButton.isEnabled = downloading
-        }
- 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     // MARK: - Action
     
-    
-    @IBAction func forceDownload(_ sender: Any) {
-        for _ in 1...10 {
-            if downloading == false  {
-                let offsetNumber = heroes.heroes.count / 100
-                let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
-                let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=\(100 * offsetNumber)&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
-                getHeroesList(url: url)
-            }
+    func download(_ iteration: Int) {
+        for i in 1...iteration {
+            let offsetNumber = (heroes.heroes.count / 100) + (i-1)
+            let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
+            tempHeroes.append(MarvelHeroes(with: offsetNumber))
+            let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=\(100 * offsetNumber)&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
+            getHeroesList(url: url, offset: offsetNumber)
         }
-        
     }
+    
     
     // MARK: - Function
     
@@ -97,12 +74,11 @@ class TableViewController: UITableViewController {
     }
     
     // MARVEL API REST
-    func getHeroesList (url: URL) {
+    func getHeroesList (url: URL, offset: Int = 0) {
         let configuration = URLSessionConfiguration.default
         let session = URLSession(configuration: configuration)
         print("Donwloading with request : \(url.absoluteString)")
         downloading = true
-        downloadButton.isEnabled = false
         let task = session.dataTask(with: url) {
             (data, response, error) in
             guard let httpResponse = response as? HTTPURLResponse,
@@ -124,11 +100,7 @@ class TableViewController: UITableViewController {
                             guard let currentHero = try Hero(json: hero) else {
                                 throw SerializationError.missing("Hero")
                             }
-                            self.heroes.addHero(hero: currentHero)
-                            let queue = OperationQueue.main
-                            queue.addOperation {
-                                self.tableView.reloadData()
-                            }
+                            self.tempHeroes[offset].addHero(hero: currentHero)
                         } catch let error {
                             print(error)
                         }
@@ -137,18 +109,32 @@ class TableViewController: UITableViewController {
                 }
                 let queue = OperationQueue.main
                 queue.addOperation {
-                    self.tableView.reloadData()
+                    
+                    self.tempHeroes[offset].status = Status.add
+                    self.downloadNumber += 1
                     self.downloading = false
-                    self.downloadButton.isEnabled = true
+                    
+                    // Adding only possible value in order
+                    var i = 0
+                    while i < self.tempHeroes.count && self.tempHeroes[i].status != Status.empty {
+                        if self.tempHeroes[i].status == Status.add {
+                            self.heroes.heroes += self.tempHeroes[i].heroes
+                            self.tempHeroes[i].status = Status.done
+                        }
+                        i+=1
+                    }
+                    
+                    if i == self.tempHeroes.count {
+                        self.tempHeroes = []
+                    }
+                    
+                    self.tableView.reloadData()
                 }
             }
         }
-        
         task.resume()
-
     }
 
-    
     @objc func loveHero(_ sender: UIButton) {
         
         guard let cell = sender.superview?.superview as? UITableViewCell,  let indexPath = tableView.indexPath(for: cell) else {
@@ -190,6 +176,22 @@ class TableViewController: UITableViewController {
             hero = heroes.heroes[position]
         }
         
+        
+        if hero.image == nil {
+            if hero.fullPathImage == "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" {
+                hero.image = UIImage.init(named: "no_image")
+            } else {
+                    let queue = OperationQueue()
+                    queue.addOperation {
+                    let imageURL = URL(string: hero.fullPathImage! )!
+                    let imageData = try! Data(contentsOf: imageURL)
+                    hero.image = UIImage(data: imageData)!
+                }
+            }
+        }
+        
+        
+        
         if let heart = cell.viewWithTag(75) as? UIButton {
             heart.addTarget(self, action: #selector(self.loveHero), for: .touchUpInside)
             if hero.loved {
@@ -206,6 +208,7 @@ class TableViewController: UITableViewController {
         if let image = cell.viewWithTag(10) as? UIImageView{
             image.image = hero.image
         }
+        
         
         if downloading == false && position >= heroes.heroes.count - 30 {
             let offsetNumber = heroes.heroes.count / 100

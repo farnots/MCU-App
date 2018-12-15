@@ -8,12 +8,24 @@
 
 import Foundation
 
+enum Status {
+    case done
+    case add
+    case empty
+}
 
 class MarvelHeroes {
+    public var status: Status = Status.empty
+    var offset: Int = 0
     var heroes: [Hero] = []
     
     init() {
         self.heroes = []
+    }
+    
+    init(with offset: Int) {
+        self.heroes = []
+        self.offset = 0
     }
     
     func storeAllHeroes(json: [[String: Any]]) throws {

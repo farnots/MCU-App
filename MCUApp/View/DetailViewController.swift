@@ -18,6 +18,14 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if hero?.image == nil {
+            let queue = OperationQueue.main
+            queue.addOperation {
+                let imageURL = URL(string: self.hero!.fullPathImage! )!
+                let imageData = try! Data(contentsOf: imageURL)
+                self.hero!.image = UIImage(data: imageData)!
+            }
+        }
         self.title? = hero?.name ?? "No name"
         imageHero.image = hero!.image
         nameHero.text = hero?.name

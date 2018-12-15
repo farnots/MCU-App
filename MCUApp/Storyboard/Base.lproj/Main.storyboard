@@ -64,15 +64,8 @@
                             <outlet property="delegate" destination="vs0-BM-AT1" id="nTm-Wm-FdB"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Marvel's heroes" id="Bbp-Lh-EZ6">
-                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="05B-cX-yLC">
-                            <connections>
-                                <action selector="forceDownload:" destination="vs0-BM-AT1" id="0fL-qk-rGd"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Marvel's heroes" id="Bbp-Lh-EZ6"/>
                     <connections>
-                        <outlet property="downloadButton" destination="05B-cX-yLC" id="GqC-88-bO1"/>
                         <outlet property="searchDisplayController" destination="EE0-gd-sH2" id="ITT-i9-Kai"/>
                     </connections>
                 </tableViewController>

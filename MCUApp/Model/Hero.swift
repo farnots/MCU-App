@@ -13,10 +13,12 @@ enum SerializationError: Error {
     case missing(String)
 }
 
+
 class Hero {
     let id: Int
     let name: String
     let description: String
+    let fullPathImage: String?
     var image: UIImage?
     var loved: Bool = false
     
@@ -25,6 +27,7 @@ class Hero {
         self.name = name
         self.image = image
         self.description = description
+        self.fullPathImage = ""
     }
     
     init?(json: [String: Any]) throws {
@@ -46,12 +49,6 @@ class Hero {
         self.id = id
         self.name = name
         self.description = description
-        let imageFullPath = imagePath + "." + imageExt
-        let queue = OperationQueue()
-        queue.addOperation {
-            let imageURL = URL(string: imageFullPath )!
-            let imageData = try! Data(contentsOf: imageURL)
-            self.image = UIImage(data: imageData)!
-        }
+        self.fullPathImage = imagePath + "." + imageExt
     }
 }
