@@ -50,12 +50,23 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Marvel's heroes" id="Bbp-Lh-EZ6"/>
+                    <connections>
+                        <outlet property="searchDisplayController" destination="EE0-gd-sH2" id="ITT-i9-Kai"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="soB-y2-sTd" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="EE0-gd-sH2">
+                    <connections>
+                        <outlet property="delegate" destination="vs0-BM-AT1" id="hiK-jt-OOw"/>
+                        <outlet property="searchContentsController" destination="vs0-BM-AT1" id="sK5-02-lfB"/>
+                        <outlet property="searchResultsDataSource" destination="vs0-BM-AT1" id="RkA-ro-RDv"/>
+                        <outlet property="searchResultsDelegate" destination="vs0-BM-AT1" id="xJi-VI-yS1"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="61.600000000000001" y="266.71664167916043"/>
         </scene>
-        <!--Detail View Controller-->
+        <!--Hero details-->
         <scene sceneID="a2d-ud-7tA">
             <objects>
                 <viewController storyboardIdentifier="detailView" id="WFO-0V-EEO" customClass="DetailViewController" customModule="MCUApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -63,43 +74,42 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S6h-x4-oDB">
-                                <rect key="frame" x="87.5" y="126" width="200" height="200"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="CBH-iQ-Jea"/>
-                                    <constraint firstAttribute="width" constant="200" id="RK9-Bh-JSD"/>
-                                </constraints>
-                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ps8-Ct-6kJ">
-                                <rect key="frame" x="16" y="346" width="343" height="28"/>
+                                <rect key="frame" x="158" y="294" width="59" height="28"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="23"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dOU-ru-4GC">
-                                <rect key="frame" x="16" y="382" width="343" height="265"/>
+                                <rect key="frame" x="16" y="330" width="343" height="317"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S6h-x4-oDB">
+                                <rect key="frame" x="0.0" y="64" width="375" height="222"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="222" id="TFU-JX-uYj"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="Ps8-Ct-6kJ" secondAttribute="trailing" constant="16" id="0dW-rB-TsJ"/>
-                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="top" secondItem="S6h-x4-oDB" secondAttribute="bottom" constant="20" id="35z-av-opT"/>
-                            <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="dOU-ru-4GC" secondAttribute="trailing" constant="16" id="8J3-t8-RvU"/>
-                            <constraint firstItem="dOU-ru-4GC" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" constant="16" id="AYn-Hg-yTe"/>
-                            <constraint firstItem="4qf-P6-XzD" firstAttribute="bottom" secondItem="dOU-ru-4GC" secondAttribute="bottom" constant="20" id="D9F-8e-Mca"/>
-                            <constraint firstItem="S6h-x4-oDB" firstAttribute="top" secondItem="4qf-P6-XzD" secondAttribute="top" constant="10" id="ST4-8G-vi2"/>
-                            <constraint firstItem="dOU-ru-4GC" firstAttribute="top" secondItem="Ps8-Ct-6kJ" secondAttribute="bottom" constant="8" id="Ysa-1S-xgE"/>
-                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="fI8-JM-lEH"/>
-                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" constant="16" id="vEb-6n-2f9"/>
-                            <constraint firstItem="S6h-x4-oDB" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="x0o-AJ-kNK"/>
+                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="1ey-eb-dMp"/>
+                            <constraint firstItem="S6h-x4-oDB" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" id="GaS-jg-ebU"/>
+                            <constraint firstItem="S6h-x4-oDB" firstAttribute="top" secondItem="4qf-P6-XzD" secondAttribute="top" id="NJ6-aR-AB5"/>
+                            <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="dOU-ru-4GC" secondAttribute="trailing" constant="16" id="Zv5-IF-VhF"/>
+                            <constraint firstItem="dOU-ru-4GC" firstAttribute="top" secondItem="Ps8-Ct-6kJ" secondAttribute="bottom" constant="8" id="b6U-0S-kaQ"/>
+                            <constraint firstItem="S6h-x4-oDB" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="fNq-Zr-DP3"/>
+                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="top" secondItem="S6h-x4-oDB" secondAttribute="bottom" constant="8" id="pHN-18-9S7"/>
+                            <constraint firstItem="dOU-ru-4GC" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" constant="16" id="taN-Tf-omL"/>
+                            <constraint firstItem="S6h-x4-oDB" firstAttribute="trailing" secondItem="4qf-P6-XzD" secondAttribute="trailing" id="vtU-th-BLL"/>
+                            <constraint firstItem="4qf-P6-XzD" firstAttribute="bottom" secondItem="dOU-ru-4GC" secondAttribute="bottom" constant="20" id="wJd-Jk-2Tx"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="4qf-P6-XzD"/>
                     </view>
-                    <navigationItem key="navigationItem" id="VhY-lD-AHm"/>
+                    <navigationItem key="navigationItem" title="Hero details" largeTitleDisplayMode="never" id="VhY-lD-AHm"/>
                     <connections>
                         <outlet property="descriptionHero" destination="dOU-ru-4GC" id="L4m-dy-NS9"/>
                         <outlet property="imageHero" destination="S6h-x4-oDB" id="EEY-I9-MFv"/>

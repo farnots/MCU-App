@@ -14,7 +14,11 @@ class TableViewController: UITableViewController {
 
     // MARK: - Variables & Constant
     var heroes: MarvelHeroes = MarvelHeroes()
+    var filteredHeroes: MarvelHeroes = MarvelHeroes()
+    
     var downloading: Bool = false
+    let searchController = UISearchController(searchResultsController: nil)
+    
     let PRIVATE_KEY: String = "f653fd68a72a50dc6eb9eb76eeac1feb9f9d3f27"
     let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
     let TIMESTAMP: String = "1"
@@ -29,6 +33,14 @@ class TableViewController: UITableViewController {
         
         // Initialization
         getHeroesList(url: url)
+        
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search marvel heroes"
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
  
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -116,6 +128,9 @@ class TableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.title = "Marvel's heroes (\(heroes.heroes.count))"
+        if isFiltering() {
+            return filteredHeroes.heroes.count
+        }
         return heroes.heroes.count
     }
 
@@ -123,8 +138,12 @@ class TableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "heroCell", for: indexPath)
         let position = indexPath.row
-        let hero = heroes.heroes[position]
-        
+        let hero: Hero
+        if isFiltering() {
+            hero = filteredHeroes.heroes[position]
+        } else {
+            hero = heroes.heroes[position]
+        }
         
         if let label = cell.viewWithTag(20) as? UILabel {
             label.text = hero.name
@@ -151,14 +170,40 @@ class TableViewController: UITableViewController {
             guard let cell = sender as? UITableViewCell, let detailViewController = segue.destination as? DetailViewController,  let indexPath = tableView.indexPath(for: cell) else {
                 return
             }
-            detailViewController.hero = heroes.heroes[indexPath.row]
-            
+            if isFiltering() {
+                detailViewController.hero = filteredHeroes.heroes[indexPath.row]
+            } else {
+                detailViewController.hero = heroes.heroes[indexPath.row]
+            }
         }
-
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        
     }
     
-
+    // MARK: - Search
+    
+    func searchBarIsEmpty() -> Bool {
+        // Returns true if the text is empty or nil
+        return searchController.searchBar.text?.isEmpty ?? true
+    }
+    
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
+        filteredHeroes.heroes = heroes.heroes.filter({( hero  : Hero) -> Bool in
+            return hero.name.lowercased().contains(searchText.lowercased())
+        })
+        
+        tableView.reloadData()
+    }
+    
+    func isFiltering() -> Bool {
+        return searchController.isActive && !searchBarIsEmpty()
+    }
 }
+
+extension TableViewController: UISearchResultsUpdating {
+    // MARK: - UISearchResultsUpdating Delegate
+    func updateSearchResults(for searchController: UISearchController) {
+        filterContentForSearchText(searchController.searchBar.text!)
+    }
+}
+
 
