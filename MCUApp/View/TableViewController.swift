@@ -13,19 +13,23 @@ import CommonCrypto
 class TableViewController: UITableViewController {
 
     // MARK: - Variables & Constant
+    // Data
     var heroes: MarvelHeroes = MarvelHeroes()
+    var filteredHeroes: MarvelHeroes = MarvelHeroes()
     var tempHeroes: [MarvelHeroes] = []
     
-    
-    var filteredHeroes: MarvelHeroes = MarvelHeroes()
-    var downloadNumber: Int = 0
-    var aimedNumber: Int = 5
+    // State
     var downloading: Bool = false
+    
+    // UI
     let searchController = UISearchController(searchResultsController: nil)
     
+    // Constant configuration
     let PRIVATE_KEY: String = "f653fd68a72a50dc6eb9eb76eeac1feb9f9d3f27"
     let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
     let TIMESTAMP: String = "1"
+    
+    @IBOutlet weak var filteredButton: UIBarButtonItem!
     
     // MARK: - View Start
     override func viewDidLoad() {
@@ -42,6 +46,29 @@ class TableViewController: UITableViewController {
     }
     
     // MARK: - Action
+    
+    @IBAction func filterLovedHeroes(_ sender: Any) {
+        if !isShowLoved() {
+            filteredButton.title = "All"
+            filteredHeroes.heroes = heroes.heroes.filter({( hero  : Hero) -> Bool in
+                return hero.loved
+            })
+            
+            tableView.reloadData()
+        } else {
+            filteredButton.title = "Favorites"
+            tableView.reloadData()
+        }
+    }
+    
+    func isShowLoved() -> Bool{
+        if filteredButton.title == "All" {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     
     func download(_ iteration: Int) {
         for i in 1...iteration {
@@ -111,9 +138,7 @@ class TableViewController: UITableViewController {
                 queue.addOperation {
                     
                     self.tempHeroes[offset].status = Status.add
-                    self.downloadNumber += 1
-                    self.downloading = false
-                    
+                   
                     // Adding only possible value in order
                     var i = 0
                     while i < self.tempHeroes.count && self.tempHeroes[i].status != Status.empty {
@@ -125,7 +150,9 @@ class TableViewController: UITableViewController {
                     }
                     
                     if i == self.tempHeroes.count {
+                        self.downloading = false
                         self.tempHeroes = []
+                        self.navigationItem.prompt = nil
                     }
                     
                     self.tableView.reloadData()
@@ -140,10 +167,8 @@ class TableViewController: UITableViewController {
         guard let cell = sender.superview?.superview as? UITableViewCell,  let indexPath = tableView.indexPath(for: cell) else {
             return // or fatalError() or whatever
         }
-       
-        print("Button pressed for \(indexPath.row)")
         
-        if isFiltering() {
+        if isFiltering() || isShowLoved() {
             if filteredHeroes.heroes[indexPath.row].loved {
                 filteredHeroes.heroes[indexPath.row].loved = false
             } else {
@@ -168,7 +193,10 @@ class TableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.title = "Marvel's heroes (\(heroes.heroes.count))"
-        if isFiltering() {
+        if downloading {
+            self.navigationItem.prompt = "Downloading..."
+        }
+        if isFiltering() || isShowLoved() {
             return filteredHeroes.heroes.count
         }
         return heroes.heroes.count
@@ -179,7 +207,7 @@ class TableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "heroCell", for: indexPath)
         let position = indexPath.row
         let hero: Hero
-        if isFiltering() {
+        if isFiltering() || isShowLoved() {
             hero = filteredHeroes.heroes[position]
         } else {
             hero = heroes.heroes[position]
@@ -237,7 +265,7 @@ class TableViewController: UITableViewController {
             guard let cell = sender as? UITableViewCell, let detailViewController = segue.destination as? DetailViewController,  let indexPath = tableView.indexPath(for: cell) else {
                 return
             }
-            if isFiltering() {
+            if isFiltering() || isShowLoved() {
                 detailViewController.hero = filteredHeroes.heroes[indexPath.row]
             } else {
                 detailViewController.hero = heroes.heroes[indexPath.row]
@@ -272,5 +300,6 @@ extension TableViewController: UISearchResultsUpdating {
         filterContentForSearchText(searchController.searchBar.text!)
     }
 }
+
 
 

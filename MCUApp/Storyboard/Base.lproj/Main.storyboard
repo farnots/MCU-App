@@ -34,7 +34,10 @@
                                             </constraints>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" tag="20" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UI8-JE-89Q">
-                                            <rect key="frame" x="91" y="11.5" width="42" height="20.5"/>
+                                            <rect key="frame" x="91" y="11.5" width="250" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="250" id="u3H-od-det"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -52,6 +55,7 @@
                                         <constraint firstItem="WgR-7Q-71o" firstAttribute="centerY" secondItem="mk8-gg-IEM" secondAttribute="centerY" id="e5f-7O-pv3"/>
                                         <constraint firstItem="UI8-JE-89Q" firstAttribute="centerY" secondItem="mk8-gg-IEM" secondAttribute="centerY" id="evs-zr-Vh0"/>
                                         <constraint firstItem="7j2-fu-v9n" firstAttribute="centerY" secondItem="mk8-gg-IEM" secondAttribute="centerY" id="o3v-g6-wdi"/>
+                                        <constraint firstAttribute="trailing" secondItem="UI8-JE-89Q" secondAttribute="trailing" id="rUG-3D-TB3"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -64,8 +68,16 @@
                             <outlet property="delegate" destination="vs0-BM-AT1" id="nTm-Wm-FdB"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Marvel's heroes" id="Bbp-Lh-EZ6"/>
+                    <navigationItem key="navigationItem" title="Marvel's heroes" id="Bbp-Lh-EZ6">
+                        <barButtonItem key="rightBarButtonItem" title="Favorites" id="hv3-Vd-1bR">
+                            <inset key="largeContentSizeImageInsets" minX="1" minY="1" maxX="1" maxY="0.0"/>
+                            <connections>
+                                <action selector="filterLovedHeroes:" destination="vs0-BM-AT1" id="sr6-J8-uEz"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="filteredButton" destination="hv3-Vd-1bR" id="Ddq-Qd-DuL"/>
                         <outlet property="searchDisplayController" destination="EE0-gd-sH2" id="ITT-i9-Kai"/>
                     </connections>
                 </tableViewController>
@@ -90,7 +102,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ps8-Ct-6kJ">
-                                <rect key="frame" x="158" y="294" width="59" height="28"/>
+                                <rect key="frame" x="12" y="294" width="351" height="28"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="23"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -113,7 +125,9 @@
                         <constraints>
                             <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="1ey-eb-dMp"/>
                             <constraint firstItem="S6h-x4-oDB" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" id="GaS-jg-ebU"/>
+                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" constant="12" id="Jo9-S1-Mjn"/>
                             <constraint firstItem="S6h-x4-oDB" firstAttribute="top" secondItem="4qf-P6-XzD" secondAttribute="top" id="NJ6-aR-AB5"/>
+                            <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="Ps8-Ct-6kJ" secondAttribute="trailing" constant="12" id="Qtp-jH-jU8"/>
                             <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="dOU-ru-4GC" secondAttribute="trailing" constant="16" id="Zv5-IF-VhF"/>
                             <constraint firstItem="dOU-ru-4GC" firstAttribute="top" secondItem="Ps8-Ct-6kJ" secondAttribute="bottom" constant="8" id="b6U-0S-kaQ"/>
                             <constraint firstItem="S6h-x4-oDB" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="fNq-Zr-DP3"/>
