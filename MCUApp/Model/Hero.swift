@@ -17,7 +17,7 @@ class Hero {
     let id: Int
     let name: String
     let description: String
-    let image: UIImage
+    var image: UIImage?
     var loved: Bool = false
     
     init(id: Int, name: String, description: String, image: UIImage) {
@@ -47,10 +47,11 @@ class Hero {
         self.name = name
         self.description = description
         let imageFullPath = imagePath + "." + imageExt
-        let imageURL = URL(string: imageFullPath )!
-        let imageData = try! Data(contentsOf: imageURL)
-        self.image = UIImage(data: imageData)!
-        
-        
+        let queue = OperationQueue()
+        queue.addOperation {
+            let imageURL = URL(string: imageFullPath )!
+            let imageData = try! Data(contentsOf: imageURL)
+            self.image = UIImage(data: imageData)!
+        }
     }
 }
