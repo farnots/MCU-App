@@ -25,7 +25,6 @@ class MarvelHeroes {
                 self.addHero(hero: currentHero)
             } catch let error {
                 print(error)
-                
             }
         }
     }

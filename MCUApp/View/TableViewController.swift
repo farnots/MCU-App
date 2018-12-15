@@ -12,20 +12,20 @@ import CommonCrypto
 
 class TableViewController: UITableViewController {
 
-    // MARK: - Variables
+    // MARK: - Variables & Constant
     var heroes: MarvelHeroes = MarvelHeroes()
-    
+    var downloading: Bool = false
+    let PRIVATE_KEY: String = "f653fd68a72a50dc6eb9eb76eeac1feb9f9d3f27"
+    let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
+    let TIMESTAMP: String = "1"
     
     // MARK: - View Start
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Connexion informations
-        let PRIVATE_KEY: String = "f653fd68a72a50dc6eb9eb76eeac1feb9f9d3f27"
-        let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
-        let TIMESTAMP: String = "1"
         let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
-        let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
+        let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
         
         // Initialization
         getHeroesList(url: url)
@@ -61,7 +61,8 @@ class TableViewController: UITableViewController {
     func getHeroesList (url: URL) {
         let configuration = URLSessionConfiguration.default
         let session = URLSession(configuration: configuration)
-        
+        print("Donwloading with request : \(url.absoluteString)")
+        downloading = true
         let task = session.dataTask(with: url) {
             (data, response, error) in
             guard let httpResponse = response as? HTTPURLResponse,
@@ -78,11 +79,26 @@ class TableViewController: UITableViewController {
                         return
                 }
                 do {
-                     try? self.heroes.storeAllHeroes(json: jsonResults)
+                    for hero in jsonResults {
+                        do {
+                            guard let currentHero = try Hero(json: hero) else {
+                                throw SerializationError.missing("Hero")
+                            }
+                            self.heroes.addHero(hero: currentHero)
+                            let queue = OperationQueue.main
+                            queue.addOperation {
+                                self.tableView.reloadData()
+                            }
+                        } catch let error {
+                            print(error)
+                        }
+                    }
+
                 }
                 let queue = OperationQueue.main
                 queue.addOperation {
                     self.tableView.reloadData()
+                    self.downloading = false
                 }
             }
         }
@@ -99,6 +115,7 @@ class TableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        self.title = "Marvel's heroes (\(heroes.heroes.count))"
         return heroes.heroes.count
     }
 
@@ -116,54 +133,32 @@ class TableViewController: UITableViewController {
             image.image = hero.image
         }
         
+        if downloading == false && position >= heroes.heroes.count - 30 {
+            let offsetNumber = heroes.heroes.count / 100
+            let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
+            let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?limit=100&offset=\(100 * offsetNumber)&ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
+            getHeroesList(url: url)
+        }
+        
         return cell
     }
     
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetail" {
+            guard let cell = sender as? UITableViewCell, let detailViewController = segue.destination as? DetailViewController,  let indexPath = tableView.indexPath(for: cell) else {
+                return
+            }
+            detailViewController.hero = heroes.heroes[indexPath.row]
+            
+        }
+
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
-    */
+    
 
 }
 

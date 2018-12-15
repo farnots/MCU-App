@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -38,6 +39,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="WFO-0V-EEO" kind="show" identifier="showDetail" id="D36-jx-m9d"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -50,6 +54,61 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="soB-y2-sTd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="61.600000000000001" y="266.71664167916043"/>
+        </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="a2d-ud-7tA">
+            <objects>
+                <viewController storyboardIdentifier="detailView" id="WFO-0V-EEO" customClass="DetailViewController" customModule="MCUApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="L1d-no-AUH">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="S6h-x4-oDB">
+                                <rect key="frame" x="87.5" y="126" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="CBH-iQ-Jea"/>
+                                    <constraint firstAttribute="width" constant="200" id="RK9-Bh-JSD"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ps8-Ct-6kJ">
+                                <rect key="frame" x="16" y="346" width="343" height="28"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dOU-ru-4GC">
+                                <rect key="frame" x="16" y="382" width="343" height="265"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="Ps8-Ct-6kJ" secondAttribute="trailing" constant="16" id="0dW-rB-TsJ"/>
+                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="top" secondItem="S6h-x4-oDB" secondAttribute="bottom" constant="20" id="35z-av-opT"/>
+                            <constraint firstItem="4qf-P6-XzD" firstAttribute="trailing" secondItem="dOU-ru-4GC" secondAttribute="trailing" constant="16" id="8J3-t8-RvU"/>
+                            <constraint firstItem="dOU-ru-4GC" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" constant="16" id="AYn-Hg-yTe"/>
+                            <constraint firstItem="4qf-P6-XzD" firstAttribute="bottom" secondItem="dOU-ru-4GC" secondAttribute="bottom" constant="20" id="D9F-8e-Mca"/>
+                            <constraint firstItem="S6h-x4-oDB" firstAttribute="top" secondItem="4qf-P6-XzD" secondAttribute="top" constant="10" id="ST4-8G-vi2"/>
+                            <constraint firstItem="dOU-ru-4GC" firstAttribute="top" secondItem="Ps8-Ct-6kJ" secondAttribute="bottom" constant="8" id="Ysa-1S-xgE"/>
+                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="fI8-JM-lEH"/>
+                            <constraint firstItem="Ps8-Ct-6kJ" firstAttribute="leading" secondItem="4qf-P6-XzD" secondAttribute="leading" constant="16" id="vEb-6n-2f9"/>
+                            <constraint firstItem="S6h-x4-oDB" firstAttribute="centerX" secondItem="L1d-no-AUH" secondAttribute="centerX" id="x0o-AJ-kNK"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="4qf-P6-XzD"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="VhY-lD-AHm"/>
+                    <connections>
+                        <outlet property="descriptionHero" destination="dOU-ru-4GC" id="L4m-dy-NS9"/>
+                        <outlet property="imageHero" destination="S6h-x4-oDB" id="EEY-I9-MFv"/>
+                        <outlet property="nameHero" destination="Ps8-Ct-6kJ" id="f6R-mQ-MWI"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aMX-Mm-tBO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1024.8" y="266.71664167916043"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="KDD-Sb-QKG">

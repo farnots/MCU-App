@@ -14,6 +14,7 @@
 		A0FB13EF21C39BAE0029D7F9 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FB13EE21C39BAE0029D7F9 /* TableViewController.swift */; };
 		A0FB141121C4B5770029D7F9 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FB141021C4B5770029D7F9 /* Hero.swift */; };
 		A0FB141321C4B5880029D7F9 /* MarvelHeroes.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FB141221C4B5880029D7F9 /* MarvelHeroes.swift */; };
+		A0FB141821C4CD910029D7F9 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0FB141721C4CD910029D7F9 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		A0FB13EE21C39BAE0029D7F9 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		A0FB141021C4B5770029D7F9 /* Hero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hero.swift; sourceTree = "<group>"; };
 		A0FB141221C4B5880029D7F9 /* MarvelHeroes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarvelHeroes.swift; sourceTree = "<group>"; };
+		A0FB141721C4CD910029D7F9 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,8 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				A0FB141521C4B7A80029D7F9 /* View */,
-				A0FB141621C4B7B60029D7F9 /* Storyboard */,
 				A0FB141421C4B7970029D7F9 /* Model */,
+				A0FB141621C4B7B60029D7F9 /* Storyboard */,
 				A0FB13E321C39B580029D7F9 /* Assets.xcassets */,
 				A0FB13E821C39B580029D7F9 /* Info.plist */,
 			);
@@ -81,6 +83,7 @@
 			children = (
 				A0FB13DC21C39B570029D7F9 /* AppDelegate.swift */,
 				A0FB13EE21C39BAE0029D7F9 /* TableViewController.swift */,
+				A0FB141721C4CD910029D7F9 /* DetailViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -167,6 +170,7 @@
 			files = (
 				A0FB13EF21C39BAE0029D7F9 /* TableViewController.swift in Sources */,
 				A0FB13DD21C39B570029D7F9 /* AppDelegate.swift in Sources */,
+				A0FB141821C4CD910029D7F9 /* DetailViewController.swift in Sources */,
 				A0FB141321C4B5880029D7F9 /* MarvelHeroes.swift in Sources */,
 				A0FB141121C4B5770029D7F9 /* Hero.swift in Sources */,
 			);
