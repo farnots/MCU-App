@@ -12,7 +12,11 @@ import Foundation
 class MarvelHeroes {
     var heroes: [Hero] = []
     
-    init(json: [[String: Any]]) throws {
+    init() {
+        self.heroes = []
+    }
+    
+    func storeAllHeroes(json: [[String: Any]]) throws {
         for hero in json {
             do {
                 guard let currentHero = try Hero(json: hero) else {

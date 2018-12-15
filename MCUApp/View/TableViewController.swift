@@ -7,18 +7,84 @@
 //
 
 import UIKit
+import CommonCrypto
+
 
 class TableViewController: UITableViewController {
 
+    // MARK: - Variables
+    var heroes: MarvelHeroes = MarvelHeroes()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        // Connexion informations
+        let PRIVATE_KEY: String = "f653fd68a72a50dc6eb9eb76eeac1feb9f9d3f27"
+        let PUBLIC_KEY: String = "9c1667932eae5fe170a0eed765bc228e"
+        let TIMESTAMP: String = "1"
+        let HASH: String = md5(TIMESTAMP +  PRIVATE_KEY + PUBLIC_KEY)
+        let url = URL(string: "https://gateway.marvel.com:443/v1/public/characters?ts=\(TIMESTAMP)&apikey=\(PUBLIC_KEY)&hash=\(HASH)")!
+        
+        // Initialization
+        getHeroesList(url: url)
+ 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    
+    
+    // MARK: - Function
+    
+    // Hasing methods
+    func md5(_ string: String) -> String {
+        
+        let context = UnsafeMutablePointer<CC_MD5_CTX>.allocate(capacity: 1)
+        var digest = Array<UInt8>(repeating:0, count:Int(CC_MD5_DIGEST_LENGTH))
+        CC_MD5_Init(context)
+        CC_MD5_Update(context, string, CC_LONG(string.lengthOfBytes(using: String.Encoding.utf8)))
+        CC_MD5_Final(&digest, context)
+        context.deallocate()
+        var hexString = ""
+        for byte in digest {
+            hexString += String(format:"%02x", byte)
+        }
+        
+        return hexString
+    }
+    
+    // MARVEL API REST
+    func getHeroesList (url: URL) {
+        let configuration = URLSessionConfiguration.default
+        let session = URLSession(configuration: configuration)
+        
+        let task = session.dataTask(with: url) {
+            (data, response, error) in
+            guard let httpResponse = response as? HTTPURLResponse,
+                httpResponse.statusCode == 200,
+                let data = data else {
+                    return
+            }
+            do {
+                guard let json = try? JSONSerialization.jsonObject(with: data) as? [String:Any]  else {
+                    return
+                }
+                guard let jsonData = json?["data"] as? [String:Any],
+                    let jsonResults = jsonData["results"] as? [[String:Any]] else {
+                        return
+                }
+                do {
+                     try? self.heroes.storeAllHeroes(json: jsonResults)
+                }
+            }
+        }
+        
+        task.resume()
+
+    }
+
 
     // MARK: - Table view data source
 
